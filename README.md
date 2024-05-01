@@ -21,5 +21,21 @@
 
 # Step 6: Analyze your registered Images in Qupath
 
+## Some general notes on Qupath Use
+## We are primarily using fluorescence images, which come embedded with distinct channels that are naturally separated.  This means we do not need to do the "separating stains" step which is generally required when working with brightfield.  
+
+### https://qupath.readthedocs.io/en/stable/index.html
+
+
+
+## Terms
+
+### Thresholder
+### Region of interest (ROI): An interesting region
+### Annotation: A closed shape surrounding a particular ROI used by Qupath to denote an area to which an analysis can be applied
+### Classifier: 
+
+## Using a Pixel Classifier to dentify fluorescence intensity within ROI's
+
 
 
