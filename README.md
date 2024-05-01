@@ -1,4 +1,4 @@
-# Wallace Lab Brain Registration Workflow
+# __________Wallace Lab Brain Registration Workflow___________________
 
 ### Described here are instructions for collecting quantitative anatomical data for individual mouse brains.  Only one brain at a time should be run through this pipeline.
 
