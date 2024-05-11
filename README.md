@@ -35,7 +35,7 @@
 ### Annotation: A closed shape surrounding a particular ROI used by Qupath to denote an area to which an analysis can be applied
 ### Classifier: 
 
-## Using a Pixel Classifier to dentify fluorescence intensity within ROI's
+## Using a Pixel Classifier to quantify fluorescence intensity within ROI's
 
 
 
