@@ -27,6 +27,8 @@
 ### https://qupath.readthedocs.io/en/stable/index.html
 
 ### This page shows you how to manage your registered slices in QuPath: https://abba-documentation.readthedocs.io/en/latest/tutorial/4_qupath_analysis.html
+### ABBA QuPath Registration Explorer: https://github.com/nickdelgrosso/ABBA-QuPath-RegistrationAnalysis
+
 
 
 
