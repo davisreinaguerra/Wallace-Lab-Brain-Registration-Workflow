@@ -4,6 +4,8 @@
 
 ### Collect slices at a regular interval
 
+![image](https://github.com/davisreinaguerra/Wallace-Lab-Brain-Registration-Workflow/assets/105831652/e5fd0bf1-04c6-465b-aaa9-ab49e6b798db)
+
 # Step 2: Mount brains
 
 ### if you are not immunostaining, be sure to use the protocol to permeabilize cells with PBST before giving them DAPI
