@@ -8,13 +8,15 @@
 
 # Step 2: Mount brains
 
-### if you are not immunostaining, be sure to use the protocol to permeabilize cells with PBST before giving them DAPI
+### if you are not immunostaining, be sure to use the protocol to permeabilize cells with PBST before giving them DAPI.
 
 # Step 3: Scan slides
 
 ### Make sure your images are not overexposed
 
 # Step 4: Create a project in Qupath containing all the slices from a single brain
+
+
 
 # Step 5: Register your brain slices with an atlas using ABBA
 
@@ -31,6 +33,7 @@
 ### This page shows you how to manage your registered slices in QuPath: https://abba-documentation.readthedocs.io/en/latest/tutorial/4_qupath_analysis.html
 ### ABBA QuPath Registration Explorer: https://github.com/nickdelgrosso/ABBA-QuPath-RegistrationAnalysis
 
+# Step 7: Visualize your data in Brainrender
 
 
 
