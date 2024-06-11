@@ -5,6 +5,8 @@
 ### Collect slices at a regular interval
 
 ![image](https://github.com/davisreinaguerra/Wallace-Lab-Brain-Registration-Workflow/assets/105831652/e5fd0bf1-04c6-465b-aaa9-ab49e6b798db)
+![image](https://github.com/davisreinaguerra/Wallace-Lab-Brain-Registration-Workflow/assets/105831652/84bb88c1-e769-4cca-b18b-52e313ba1fdd)
+
 
 # Step 2: Mount brains
 
