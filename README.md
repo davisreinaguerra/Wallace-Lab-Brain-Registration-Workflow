@@ -2,10 +2,12 @@
 
 # Step 1: Slice your brain
 
-### Collect slices at a regular interval
+### The first step is to slice your brain however you see fit.  Because the most common cutting plane for histology is coronal we will show the process using coronal slides but keep in mind that all of these steps can be accomplished with sagittal and horizontal sections as well, and although you should do everything you can to ensure an even cutting angle (see pictures below, it is best to start with a reasonably even brain).  
 
 ![image](https://github.com/davisreinaguerra/Wallace-Lab-Brain-Registration-Workflow/assets/105831652/e5fd0bf1-04c6-465b-aaa9-ab49e6b798db)
 ![image](https://github.com/davisreinaguerra/Wallace-Lab-Brain-Registration-Workflow/assets/105831652/84bb88c1-e769-4cca-b18b-52e313ba1fdd)
+
+
 
 
 # Step 2: Mount brains
@@ -26,7 +28,7 @@
 ### 
 
 # Step 6: Analyze your registered Images in Qupath
-
+ 
 ## Some general notes on Qupath Use
 ## We are primarily using fluorescence images, which come embedded with distinct channels that are naturally separated.  This means we do not need to do the "separating stains" step which is generally required when working with brightfield.  
 
@@ -34,9 +36,6 @@
 
 ### This page shows you how to manage your registered slices in QuPath: https://abba-documentation.readthedocs.io/en/latest/tutorial/4_qupath_analysis.html
 ### ABBA QuPath Registration Explorer: https://github.com/nickdelgrosso/ABBA-QuPath-RegistrationAnalysis
-
-# Step 7: Visualize your data in Brainrender
-
 
 
 ## Terms
