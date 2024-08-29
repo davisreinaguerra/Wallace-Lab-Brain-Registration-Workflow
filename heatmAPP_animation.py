@@ -22,9 +22,9 @@ def create_gif_from_png(folder_path, output_filename, frame_duration):
                        duration=frame_duration,
                        loop=0)
 
-folder_path = easygui.diropenbox(msg="Select the folder containing the PNG files")
-name_of_file = easygui.enterbox("File name","Input")
+animation_folder_path = easygui.diropenbox(msg="Select the folder containing the PNG files")
+animation_filename = easygui.enterbox("File name","Input")
 frame_duration = 100  # Duration per frame in milliseconds
-output_filename = f"{name_of_file}.gif"  # Specify the output GIF file name
+output_filename = f"{animation_filename}.gif"  # Specify the output GIF file name
 
 create_gif_from_png(folder_path, output_filename, frame_duration)

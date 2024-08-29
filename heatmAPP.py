@@ -13,6 +13,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.colors import ListedColormap
 import matplotlib.ticker as ticker
 from scipy.ndimage import gaussian_filter
+from PIL import Image
+import os
 
 
 """
@@ -68,6 +70,17 @@ def add_message(message):
     readout_area.insert(tk.END, message + "\n")
     readout_area.see(tk.END)
     readout_area.config(state=tk.DISABLED)
+
+def create_gif_from_png(folder_path, output_filename, frame_duration):
+    images = sorted([img for img in os.listdir(folder_path) if img.endswith('.png')])
+    frames = [Image.open(os.path.join(folder_path, image)) for image in images]
+    reversed_frames = frames[-2::-1]
+    all_frames = frames + reversed_frames
+    all_frames[0].save(os.path.join(folder_path, output_filename),
+                       save_all=True,
+                       append_images=all_frames[1:],
+                       duration=frame_duration,
+                       loop=0)
 
 """
 Callback Functions 
@@ -283,11 +296,25 @@ def update_heatmap(val = None):
         axs[2].invert_xaxis() # flip left and right
 
         threeaxis_canvas.draw()
-        add_message("Data Loaded")
+        add_message(f"{open_filename} loaded from {file_path }")
 
 def update_selection_name(selection):
     global selection_name
     selection_name = selection
+
+def create_animation():
+    global create_gif_from_png
+    global open_filename
+    
+    animation_folder_path = easygui.diropenbox(msg="Select the folder containing the PNG files")
+    frame_duration = int(easygui.enterbox("Frame Duration:", "Input"))
+    output_filename = f"{open_filename}_animation.gif"  # Specify the output GIF file name
+
+    try:
+        create_gif_from_png(animation_folder_path, output_filename, frame_duration)
+        add_message(f"saved: {output_filename} to {animation_folder_path}")
+    except:
+        add_message("Does that folder contain png files?")
 
 def run_command():
     global rc_limits
@@ -336,11 +363,18 @@ def run_command():
         axs[0].set_xlim(working_xlim_X)
         axs[1].set_xlim(working_xlim_Y)
         axs[2].set_xlim(working_xlim_Z)
-        axs[0].set_xlabel("micrometers", fontsize=global_fontsize, fontname=global_font)
-        axs[1].set_xlabel("micrometers", fontsize=global_fontsize, fontname=global_font)
-        axs[2].set_xlabel("micrometers", fontsize=global_fontsize, fontname=global_font)
-        axs[0].set_ylabel("frequency", fontsize=global_fontsize, fontname=global_font)
+        axs[0].set_xticks([rc_limits[0], rc_limits[1]])
+        axs[1].set_xticks([dv_limits[0], dv_limits[1]])
+        axs[2].set_xticks([lr_limits[0], 5700, lr_limits[1]])
+        axs[0].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1000:.1f}'))
+        axs[1].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1000:.1f}'))
+        axs[2].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1000:.1f}'))
+        axs[0].set_xlabel("millimeters", fontsize=global_fontsize, fontname=global_font)
+        axs[1].set_xlabel("millimeters", fontsize=global_fontsize, fontname=global_font)
+        axs[2].set_xlabel("millimeters", fontsize=global_fontsize, fontname=global_font)
+        axs[0].set_ylabel("cell density (norm)", fontsize=global_fontsize, fontname=global_font)
         axs[2].axvline(x=5700)
+        axs[0].set_yticks([])
         threeaxis_canvas.draw()
     elif selected_name == "Scale Global Max":
         try:
@@ -372,15 +406,16 @@ def save_heatmap():
             heatmap_fig.savefig(save_fig_filename)
         add_message("Heatmaps Saved")
     except:
-        update_heatmap(0)
-        heatmap_fig.savefig(open_filename + "_overview.png")
+        heatmap_fig.savefig(open_filename + "_overview.jpg")
         add_message("Heatmap Saved")
 
 def save_threeaxis():
+    global open_filename
+
     save_dir = easygui.diropenbox(title="Select Directory to Save Figures")
     os.chdir(save_dir)
 
-    threeaxis_fig.savefig(open_filename + "_threeaxis_histogram.png")
+    threeaxis_fig.savefig(open_filename + "_threeaxis_histogram.jpg")
     add_message("Threeaxis Saved")
 
 
@@ -395,8 +430,6 @@ ________________________________________________________________________________
 root = tk.Tk()
 root.title("Mouse Neuroanatomy HeatMapp")
 
-root.rowconfigure(3, weight=1)
-
 # Title Frame
 frame_title = tk.Frame(root)
 frame_title.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
@@ -406,11 +439,11 @@ frame_config = tk.Frame(root)
 frame_config.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
 # Heatmap Frame
-frame_show_heatmap = tk.Frame(root, bd=5, relief=tk.GROOVE)
+frame_show_heatmap = tk.Frame(root, bd=5, relief=tk.RAISED, bg=background_color)
 frame_show_heatmap.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
 
 # Threeaxis Frame
-frame_show_threeaxis = tk.Frame(root, bd=5, relief=tk.GROOVE)
+frame_show_threeaxis = tk.Frame(root, bd=5, relief=tk.RAISED, bg=background_color)
 frame_show_threeaxis.grid(row=3, column=0, padx=10, pady=10, sticky="nsew")
 
 # Readout Frame
@@ -421,12 +454,11 @@ frame_readout.grid(row=0, column=1, rowspan=5, padx=10, pady=10, sticky='ns')
 Heatmap Figure Creation ________________________________________________________________________________________________
 
 """
-heatmap_fig, (ax_lrdv, ax_rcdv) = plt.subplots(1, 2, figsize=(10, 4.5))
+heatmap_fig, (ax_lrdv, ax_rcdv) = plt.subplots(1, 2, figsize=(10, 4))
 heatmap_fig.patch.set_facecolor(background_color)
 heatmap_fig.tight_layout(pad=2.0)
 ax_lrdv.set_facecolor("white")
 ax_rcdv.set_facecolor("white")
-
 
 heatmap_canvas = FigureCanvasTkAgg(heatmap_fig, master=frame_show_heatmap)
 heatmap_canvas.draw()
@@ -441,9 +473,9 @@ threeaxis_fig, axs = plt.subplots(1, 3, figsize=(10, 3), sharey=True)
 threeaxis_fig.patch.set_facecolor(background_color)
 threeaxis_fig.tight_layout(pad=2.0)
 
-axs[0].hist([], bins="auto", color=x_color)
-axs[1].hist([], bins="auto", color=y_color)
-axs[2].hist([], bins="auto", color=z_color)
+axs[0].hist([], bins=20, color=x_color)
+axs[1].hist([], bins=20, color=y_color)
+axs[2].hist([], bins=20, color=z_color)
 axs[0].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1000:g}'))
 axs[1].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1000:g}'))
 axs[2].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1000:g}'))
@@ -478,10 +510,46 @@ Widgets (frame_title) __________________________________________________________
 # Title of App
 title = tk.Label(
     frame_title,
-    text="HeatMapp",
-    font=(global_font, title_fontsize)
+    text="HeatmAPP",
+    font=("Papyrus", title_fontsize)
 )
 title.pack(side=tk.LEFT, padx=10)
+
+# Heatmap Save Button
+animation_button = tk.Button(
+    frame_title,
+    text="Create Animation",
+    font=(global_font, global_fontsize),
+    command=create_animation,
+    relief=tk.RAISED,  # Keep raised
+    borderwidth=5,
+    height=1
+)
+animation_button.pack(side=tk.RIGHT, padx=10)
+
+# Heatmap Save Button
+save_button_heatmap = tk.Button(
+    frame_title,
+    text="Save Heatmap",
+    font=(global_font, global_fontsize),
+    command=save_heatmap,
+    relief=tk.RAISED,  # Keep raised
+    borderwidth=5,
+    height=1
+)
+save_button_heatmap.pack(side=tk.RIGHT, padx=10)
+
+# Threeaxis Save Button
+save_button_threeaxis = tk.Button(
+    frame_title,
+    text="Save Histogram",
+    font=(global_font, global_fontsize),
+    command=save_threeaxis,
+    relief=tk.RAISED,  # Keep raised
+    borderwidth=5,
+    height=1
+)
+save_button_threeaxis.pack(side=tk.RIGHT, padx=10)
 
 # Load Data Button
 load_data_button = tk.Button(
@@ -500,7 +568,7 @@ load_data_button.pack(side=tk.RIGHT, padx=10)
 Widgets (frame_config) ______________________________________________________________________________________"""
 
 # Heatmap Command Options
-options_heatmap = ["select...", "Slice Into", "Slice By", "Histogram Bins", "Scale Global Max"]
+options_heatmap = ["select option...", "Slice Into", "Slice By", "Histogram Bins", "Scale Global Max"]
 selected_option_heatmap = tk.StringVar(frame_config)
 selected_option_heatmap.set(options_heatmap[0])
 
@@ -510,13 +578,13 @@ command_name = tk.OptionMenu(
     *options_heatmap,
     command=update_selection_name,
 )
-command_name.config(width=15, relief="flat", bg="WHITE", font=(global_font, global_fontsize))  # Adjust width and font size
+command_name.config(width=20, relief="raised", bd=5, font=(global_font, global_fontsize))  # Adjust width and font size
 command_name.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
 
 # Command Entry
 command_value = tk.Entry(
     frame_config,
-    width=30,
+    width=70,
     relief=tk.FLAT,
     borderwidth=5,
     bg="WHITE",
@@ -527,7 +595,7 @@ command_value.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 # Command Button
 command_button = tk.Button(
     frame_config,
-    text="Run",
+    text="Run Command",
     font=(global_font, global_fontsize),
     command=run_command,
     relief=tk.RAISED,  # Keep raised
@@ -535,30 +603,6 @@ command_button = tk.Button(
     height=1
 )
 command_button.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
-
-# Heatmap Save Button
-save_button_heatmap = tk.Button(
-    frame_config,
-    text="Save Heatmap",
-    font=(global_font, global_fontsize),
-    command=save_heatmap,
-    relief=tk.RAISED,  # Keep raised
-    borderwidth=5,
-    height=1
-)
-save_button_heatmap.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
-
-# Threeaxis Save Button
-save_button_threeaxis = tk.Button(
-    frame_config,
-    text="Save Histogram",
-    font=(global_font, global_fontsize),
-    command=save_threeaxis,
-    relief=tk.RAISED,  # Keep raised
-    borderwidth=5,
-    height=1
-)
-save_button_threeaxis.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
 
 # Slice Slider
 slice_slider = tk.Scale(
@@ -577,7 +621,7 @@ Widgets (frame_readout) ________________________________________________________
 readout_area = tk.Text(
     frame_readout,
     wrap=tk.WORD,
-    width=70,
+    width=90,
     height=10,
     state=tk.DISABLED,
     font=(global_font, global_fontsize)  # Set font for readout area
