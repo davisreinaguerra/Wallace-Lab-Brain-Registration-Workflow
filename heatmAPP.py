@@ -383,6 +383,10 @@ def run_command():
             add_message("Scaled!")
         except:
             add_message("You gotta slice first")
+    elif selected_name == "rcdv axvline":
+        xval = int(value) * 1000
+        ax_rcdv.axvline(x=xval, c="black")
+        heatmap_canvas.draw()
     else:
         add_message("error: no entry")
 
@@ -568,7 +572,7 @@ load_data_button.pack(side=tk.RIGHT, padx=10)
 Widgets (frame_config) ______________________________________________________________________________________"""
 
 # Heatmap Command Options
-options_heatmap = ["select option...", "Slice Into", "Slice By", "Histogram Bins", "Scale Global Max"]
+options_heatmap = ["select option...", "Slice Into", "Slice By", "Histogram Bins", "Scale Global Max", "rcdv axvline"]
 selected_option_heatmap = tk.StringVar(frame_config)
 selected_option_heatmap.set(options_heatmap[0])
 
